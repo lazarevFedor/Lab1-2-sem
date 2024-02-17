@@ -23,34 +23,20 @@ struct Student{
 
 Student dataBase[SIZE];
 
-Student creatStudent() {
+Student createStudent() {
+	cout << "Введите имя: ";
 	clearStream();
 	Student student;
 	getline(cin, student.name);
+	cout << "Введите пол: ";
 	cin >> student.sex;
-	cin >> student.group; 
+	cout << "Введите группу: ";
+	cin >> student.group;
+	cout << "Введите номер в группе: ";
 	cin >> student.id;
+	cout << "Введите оценки через пробел: ";
 	for (int i = 0; i < 8; i++) cin >> student.grades[i];
 	return student;
-}
-
-int binSearch(int arr[], int value, int len) {
-	int low = 0;
-	int high = len - 1;
-	int mid;
-	while (low <= high) {
-		mid = (low + high) / 2;
-		if (value == arr[mid]) {
-			return mid;
-		}
-		else if (value > arr[mid]) {
-			low = mid + 1;
-		}
-		else {
-			high = mid - 1;
-		}
-	}
-	return -1;
 }
 
 void showStudents(Student dataBase[], int& count) {
@@ -100,6 +86,26 @@ void topStudents(Student top[SIZE], int &count) {
 	}
 }
 
+Student changeId(Student student, int& numGroup, int& numId, int& count) {
+	if (numId == 1) {
+		for (int i = 0; i < count; i++) {
+			if (dataBase[i].group == numGroup && dataBase[i].id <= numId) {
+				++dataBase[i].id;
+			}
+		}
+		student.id = numId;
+	}
+	else {
+		for (int i = 0; i < count; i++) {
+			if (dataBase[i].group == numGroup && dataBase[i].id <= numId) {
+				--dataBase[i].id;
+			}
+		}
+		student.id = numId;
+	}
+	return student;
+}
+
 void changeStudent(int &numGroup, int &numId, int &count) {
 	Student student;
 	int check = -1;
@@ -135,10 +141,12 @@ void changeStudent(int &numGroup, int &numId, int &count) {
 		case 3:
 			cout << "\nВведите данные -->> ";
 			cin >> student.group;
+			student = changeId(student, numGroup, numId, count);
 			break;
 		case 4:
 			cout << "\nВведите данные -->> ";
-			cin >> student.id;
+			cin >> numId;
+			student = changeId(student, numGroup, numId, count);
 			break;
 		case 5:
 			cout << "\nВведите данные -->> ";
@@ -151,6 +159,12 @@ void changeStudent(int &numGroup, int &numId, int &count) {
 	}
 }
 
+void gradesSort() {
+	Student ideal[SIZE];
+	Student good[SIZE];
+	Student satisfctrly[SIZE];
+
+}
 
 int main(){
 	setlocale(LC_ALL, "Russian");
@@ -199,8 +213,7 @@ int main(){
 				cout << "Закончилось место для записи!\n";
 			}
 			else {
-				cout << "\nВведите данные:\n";
-				dataBase[count] = creatStudent();
+				dataBase[count] = createStudent();
 				fout << '\n' << dataBase[count].name << '\n';
 				fout << dataBase[count].sex << '\n';
 				fout << dataBase[count].group << '\n';
@@ -285,6 +298,9 @@ int main(){
 			break;
 		case 9:
 			exit(0);
+			break;
+		default:
+			cout << "\nНеправильно введен номер!\n";
 		}
 	}
 	return 0;
