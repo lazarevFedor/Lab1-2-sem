@@ -7,12 +7,7 @@ using namespace std;
 int choise;
 const int SIZE = 30;
 
-void clearStream() {
-	cin.clear();
-	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
-struct Student{
+struct Student {
 	string name;
 	char sex;
 	int group;
@@ -22,6 +17,11 @@ struct Student{
 };
 
 Student dataBase[SIZE];
+
+void clearStream() {
+	cin.clear();
+	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
 
 Student createStudent() {
 	cout << "Введите имя: ";
@@ -39,7 +39,7 @@ Student createStudent() {
 	return student;
 }
 
-void showStudents(Student dataBase[], int& count) {
+void showAllStudents(Student dataBase[], int& count) {
 	for (int j = 0; j < count; j++) {
 		cout << dataBase[j].name << "\t";
 		cout << dataBase[j].sex << "\t";
@@ -52,6 +52,17 @@ void showStudents(Student dataBase[], int& count) {
 	}
 }
 
+void showStudent(int n) {
+	cout << dataBase[n].name << "\t";
+	cout << dataBase[n].sex << "\t";
+	cout << dataBase[n].group << "\t";
+	cout << dataBase[n].id << "\t";
+	for (int i = 0; i < 8; i++) {
+		cout << dataBase[n].grades[i] << " ";
+	}
+	cout << "\n\n";
+}
+
 float countScore(int grades[8]) {
 	float score = 0;
 	for (int i = 0; i < 8; i++) {
@@ -61,7 +72,7 @@ float countScore(int grades[8]) {
 	return score;
 }
 
-void topStudents(Student top[SIZE], int &count) {
+void topStudents(Student top[SIZE], int& count) {
 	int j;
 	Student buff;
 	for (int i = 1; i < count; i++) {
@@ -73,7 +84,7 @@ void topStudents(Student top[SIZE], int &count) {
 		}
 		top[j + 1] = buff;
 	}
-	for (int j = count-1; j >= 0 ; j--) {
+	for (int j = count - 1; j >= 0; j--) {
 		cout << top[j].name << "\t";
 		cout << top[j].sex << "\t";
 		cout << top[j].group << "\t";
@@ -106,7 +117,7 @@ Student changeId(Student student, int& numGroup, int& numId, int& count) {
 	return student;
 }
 
-void changeStudent(int &numGroup, int &numId, int &count) {
+void changeStudent(int& numGroup, int& numId, int& count) {
 	Student student;
 	int check = -1;
 	for (int i = 0; i < count; i++) {
@@ -127,7 +138,7 @@ void changeStudent(int &numGroup, int &numId, int &count) {
 			"4) Номер\n" <<
 			"5) Оценки\n" << "-->> ";
 		cin >> choise;
-		switch (choise){
+		switch (choise) {
 		case 1:
 			cout << "\nВведите данные -->> ";
 			student.name = "";
@@ -159,14 +170,51 @@ void changeStudent(int &numGroup, int &numId, int &count) {
 	}
 }
 
-void gradesSort() {
-	Student ideal[SIZE];
-	Student good[SIZE];
-	Student satisfctrly[SIZE];
-
+void gradesSort(int& count) {
+	int gradesCount = 0;
+	//вывод троечников
+	cout << "Троечники:\n";
+	for (int i = 0; i < count; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (dataBase[i].grades[j] == 3) {
+				showStudent(i);
+				break;
+			}
+		}
+	}
+	//вывод хорошистов
+	cout << "Хорошисты:\n";
+	for (int i = 0; i < count; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (dataBase[i].grades[j] == 3) {
+				gradesCount = -1;
+				break;
+			}
+			else if (dataBase[i].grades[j] == 5) {
+				++gradesCount;
+			}
+		}
+		if (gradesCount != 8 && gradesCount != -1) {
+			showStudent(i);
+		}
+	}
+	//вывод отличников
+	cout << "Отличники:\n";
+	gradesCount = 0;
+	for (int i = 0; i < count; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (dataBase[i].grades[j] == 3 || dataBase[i].grades[j] == 4) {
+				gradesCount = -1;
+				break;
+			}
+		}
+		if (gradesCount != -1) {
+			showStudent(i);
+		}
+	}
 }
 
-int main(){
+int main() {
 	setlocale(LC_ALL, "Russian");
 	ofstream fout;
 	ifstream fin;
@@ -202,7 +250,7 @@ int main(){
 			"8) Вывод данных о студентах, имеющих номер в списке – k\n" <<
 			"9) Выход\n" << "-->> ";
 		cin >> choise;
-		switch (choise){
+		switch (choise) {
 		case 1:
 			fout.open("LETI.txt", ofstream::app);
 			if (!fout.is_open()) {
@@ -233,10 +281,28 @@ int main(){
 			cout << "Введите номер студента в группе -->> ";
 			cin >> numId;
 			changeStudent(numGroup, numId, count);
+			fout.open("LETI.txt");
+			if (!fout.is_open()) {
+				cout << "Ошибка открытия файла!!!";
+				exit(0);
+			}
+			else {
+				for (int i = 0; i < count; i++) {
+					fout << '\n' << dataBase[i].name << '\n';
+					fout << dataBase[i].sex << '\n';
+					fout << dataBase[i].group << '\n';
+					fout << dataBase[i].id << '\n';
+					for (int j = 0; j < 7; j++) {
+						fout << dataBase[i].grades[j] << " ";
+					}
+					fout << dataBase[i].grades[7];
+				}
+			}
+			fout.close();
 			break;
 		case 3:
 			system("cls");
-			showStudents(dataBase, count);
+			showAllStudents(dataBase, count);
 			break;
 		case 4:
 			cout << "Введите номер группы -->> ";
@@ -277,7 +343,8 @@ int main(){
 			cout << "\nКоличество девчат: " << countW << "\n";
 			break;
 		case 7:
-			
+			system("cls");
+			gradesSort(count);
 			break;
 		case 8:
 			clearStream();
