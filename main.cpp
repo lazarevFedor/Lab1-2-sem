@@ -62,15 +62,16 @@ Student createStudent() {
 
 void showAllStudents(Student dataBase[], int& count) {
 	for (int j = 0; j < count; j++) {
-		cout << dataBase[j].name << "\t";
-		cout << dataBase[j].sex << "\t";
-		cout << dataBase[j].group << "\t";
-		cout << dataBase[j].id << "\t";
-		for (int i = 0; i < 8; i++) {
-			cout << dataBase[j].grades[i] << " ";
-		}
-		cout << "\n\n";
+	cout << "ФИО: " << dataBase[j].name;
+	cout << "\tПол: " << dataBase[j].sex;
+	cout << "\tГруппа: " << dataBase[j].group;
+	cout << "\tНомер: " << dataBase[j].id << "\tОценки: ";
+	for (int i = 0; i < 8; i++) {
+		cout << dataBase[j].grades[i] << " ";
 	}
+	cout << "\tСредний балл: " << dataBase[j].averageScore;
+	cout << "\n\n";
+}
 }
 
 void showStudent(int n, Student base[SIZE]) {
